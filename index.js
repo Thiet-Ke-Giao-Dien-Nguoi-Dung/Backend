@@ -1,10 +1,18 @@
 const express = require("express");
 const config = require("config");
 const port = config.get("port");
+const morgan = require("morgan");
+const BodyParser = require("body-parser");
+const cors = require("cors");
+
 const db = require("./models/index");
 
 const app = express();
-
+app.use(cors());
+app.use(morgan('tiny'));
+app.use(BodyParser.urlencoded({extend: false}));
+app.use(BodyParser.json());
+app.use("/api", require("./router/index"));
 
 db.sequelize
     .sync()
