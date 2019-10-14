@@ -4,7 +4,7 @@
     "host": "mydb.crbcclnwhqvy.ap-southeast-1.rds.amazonaws.com",
     "port": 3306,
     "user": "quanht",
-    "password": "23041999",
+    "password": "23061999",
     "name": "ETO"
   },
   "secretTokenAdmin": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
