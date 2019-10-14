@@ -17,6 +17,9 @@ module.exports = (sequelize, Sequelize) => {
         },
         phone_number: {
             type: Sequelize.INTEGER
+        },
+        create_time: {
+            type: Sequelize.STRING
         }
     });
 

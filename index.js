@@ -10,7 +10,7 @@ const db = require("./models/index");
 const app = express();
 app.use(cors());
 app.use(morgan('tiny'));
-app.use(BodyParser.urlencoded({extend: false}));
+app.use(BodyParser.urlencoded({extended: false}));
 app.use(BodyParser.json());
 app.use("/api", require("./router/index"));
 
