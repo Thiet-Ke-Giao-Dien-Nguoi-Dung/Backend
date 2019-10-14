@@ -19,14 +19,20 @@ async function getRestaurants(req, res) {
 
 async function createRestaurant(req, res){
     try{
-        let {name, address} = req.body;
+        let {name, address, table_count} = req.body;
         if(!name || !address){
             throw new Error("Something missing")
         }
-        await db.Restaurant.create({
+        let restaurant = await db.Restaurant.create({
             name: name,
             address: address, id_user: req.tokenData.id_user
         });
+        for(let i=0; i<table_count; i++){
+            await db.Table.create({
+                location: `Bàn số ${i+1}`,
+                id_restaurant: restaurant.dataValues.id_restaurant
+            })
+        }
         return res.json(response.buildSuccess({}))
     }
     catch(err){

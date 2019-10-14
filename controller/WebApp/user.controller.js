@@ -54,11 +54,11 @@ async function login(req, res) {
         }else{
             let check = await bcrypt.compare(password, user.dataValues.password);
             if(check){
-                const fifteenMinutes = 1000 * 60 * 15;
+                const oneDay = 1000 * 60 * 60 * 24;
                 const token = jwt.sign({
                     id_user: user.dataValues.id_user
-                }, config.get("secretToken"), {
-                    expiresIn: fifteenMinutes
+                }, config.get("secretTokenAdmin"), {
+                    expiresIn: oneDay
                 });
                 return res.json(response.buildSuccess({token}))
             }else{

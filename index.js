@@ -14,8 +14,9 @@ app.use(BodyParser.urlencoded({extended: false}));
 app.use(BodyParser.json());
 app.use("/api", require("./router/index"));
 
-db.sequelize
-    .sync()
+db.sequelize.sync({
+        force: false
+    })
     .then(() => {
         console.log("Connect db oki");
         app.listen(port, (err) => {

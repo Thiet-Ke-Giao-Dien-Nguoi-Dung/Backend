@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-router.use("/mp", require("./MobileApp"));
+router.use("/ma", require("./MobileApp"));
 router.use("/wa", require("./WebApp"));
 
 

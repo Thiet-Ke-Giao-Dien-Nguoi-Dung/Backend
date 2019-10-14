@@ -1,0 +1,12 @@
+{
+  "port": 3001,
+  "database": {
+    "host": "mydb.crbcclnwhqvy.ap-southeast-1.rds.amazonaws.com",
+    "port": 3306,
+    "user": "quanht",
+    "password": "23041999",
+    "name": "ETO"
+  },
+  "secretTokenAdmin": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+  "secretTokenEmployees": "eyJhbasdGciOiJIUasczI1NiIsInR5casdCI6Ikp9"
+}

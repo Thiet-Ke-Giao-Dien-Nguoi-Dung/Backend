@@ -2,11 +2,11 @@ const response = require("../util/response");
 const jwt = require("jsonwebtoken");
 const config = require("config");
 
-async function verifyAdmin(req, res, next) {
+async function verifyEmployees(req, res, next) {
     let token = req.headers["token"];
     try{
         if(token){
-            jwt.verify(token, config.get("secretTokenAdmin"), (err, decode) => {
+            jwt.verify(token, config.get("secretTokenEmployees"), (err, decode) => {
                 if(err){
                     return res.json(response.buildUnauthorized())
                 }
@@ -18,9 +18,9 @@ async function verifyAdmin(req, res, next) {
         }
     }
     catch(err){
-        console.log("verifyAdmin: ", err.message);
+        console.log("verifyEmployees: ", err.message);
         return res.json(response.buildFail(err.message))
     }
 }
 
-module.exports = verifyAdmin;
+module.exports = verifyEmployees;

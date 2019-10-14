@@ -1,0 +1,28 @@
+
+language: node_js
+node_js:
+  - 10.16.3
+before_install:
+  - openssl aes-256-cbc -K $encrypted_fcc97e029ac9_key -iv $encrypted_fcc97e029ac9_iv -in quan-server.pem.enc -out quan-server.pem -d
+  - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+  - chmod 700 quan-server.pem
+  - which ssh-agent || (apt-get update -y && apt-get install openssh-client -y)
+  - which rsync || (apt-get update -y && apt-get install rsync -y)
+  - eval $(ssh-agent -s)
+  - ssh-add quan-server.pem
+  - rm -f quan-server.pem
+  - cp config/.production.env .env
+install:
+  - npm install
+deploy:
+  - provider: script
+    skip_cleanup: true
+    script:
+      - rsync -azvh --delete --rsh="ssh -p $PROD_SERVER_PORT -o StrictHostKeyChecking=no" $(pwd)/Backend $PROD_SERVER_USER@$PROD_SERVER_IP:/BTL/
+      - pm2
+      - npm run dev
+    on:
+      branch: dev
+branches:
+  only:
+    - dev

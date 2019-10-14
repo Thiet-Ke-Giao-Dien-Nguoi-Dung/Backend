@@ -8,6 +8,10 @@ module.exports = (sequelize, Sequelize) => {
         },
         location: {
             type: Sequelize.STRING
+        },
+        is_ordered: {
+            type: Sequelize.BOOLEAN,
+            defaultValue: false
         }
     });
 
