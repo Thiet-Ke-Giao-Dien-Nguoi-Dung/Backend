@@ -1,15 +1,20 @@
 const db = require("../../models/index");
 const Item = db.Item;
 const Restaurant = db.Restaurant;
+const uploadImageToS3 = require("../../util/s3/uploadImageToS3");
+const createUrl = require("../../util/s3/createUrl");
 
 const response = require("../../util/response");
 
-//todo upload image to s3
 async function createItem(req, res) {
+
     let {id_restaurant} = req.params;
-    let {image, name, price} = req.body;
+    let {name, price} = req.body;
     try{
-        if(!image || !name || !price){
+        if(!req.file){
+            throw new Error("Vui lòng chọn ít nhất 1 ảnh.")
+        }
+        if(!name || !price){
             throw new Error("Some thing missing");
         }
         let restaurant = await Restaurant.findOne({
@@ -21,10 +26,13 @@ async function createItem(req, res) {
         if(!restaurant){
             throw new Error("Bạn không thể thêm item cho quán này.")
         }
+        let type = req.file.originalname.split(".")[req.file.originalname.split(".").length - 1];
+        let url = await uploadImageToS3(req.file.buffer, type);
         await Item.create({
             ...req.body,
             status: "in_stock",
-            id_restaurant
+            id_restaurant,
+            image: url
         });
         return res.json(response.buildSuccess({}))
     }
@@ -34,7 +42,6 @@ async function createItem(req, res) {
     }
 }
 
-//update image
 async function updateItem(req, res) {
     let {id_restaurant, id_item} = req.params;
     try{
@@ -71,7 +78,6 @@ async function updateItem(req, res) {
     }
 }
 
-//todo get image from s3
 async function getItems(req, res){
     try{
         let {id_restaurant} = req.params;
@@ -92,6 +98,10 @@ async function getItems(req, res){
                 ["price", 'ASC']
             ]
         });
+        items = items.map(e => e.dataValues);
+        for(let e of items){
+            e.image = await createUrl(e.image)
+        }
         res.json(response.buildSuccess({items}))
     }
     catch(err){

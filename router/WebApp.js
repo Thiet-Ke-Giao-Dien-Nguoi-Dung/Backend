@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const verifyAdmin = require("../middleware/verifyAdmin");
+const uploadImage = require("../middleware/uploadImage");
 const UserController = require("../controller/WebApp/user.controller");
 const RestaurantController = require("../controller/WebApp/restaurant.controller");
 const EmployeesController = require("../controller/WebApp/employees.controller");
@@ -23,7 +24,7 @@ router.put("/restaurants/:id_restaurant/employees/:id_employees", verifyAdmin, E
 
 
 router.get("/restaurants/:id_restaurant/items", verifyAdmin, ItemController.getItems);
-router.post("/restaurants/:id_restaurant/items", verifyAdmin, ItemController.createItem);
+router.post("/restaurants/:id_restaurant/items", verifyAdmin, uploadImage, ItemController.createItem);
 router.put("/restaurants/:id_restaurant/items/:id_item", verifyAdmin, ItemController.updateItem);
 
 module.exports = router;

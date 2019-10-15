@@ -5,6 +5,7 @@ const response = require("../../util/response");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const config = require("config");
+const createUrl = require("../../util/s3/createUrl");
 
 async function login(req, res) {
     try{
@@ -60,6 +61,10 @@ async function getItems(req, res){
                 ["price", 'ASC']
             ]
         });
+        items = items.map(e => e.dataValues);
+        for(let e of items){
+            e.image = await createUrl(e.image)
+        }
         res.json(response.buildSuccess({items}))
     }
     catch(err){
