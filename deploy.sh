@@ -1,6 +1,7 @@
 #!/bin/bash
 
-#
-#cd ~/BTL/Backend
-#git pull
-echo "Quanht in here"
+
+cd ~/BTL/Backend
+git pull
+npm install
+pm2 restart backend
