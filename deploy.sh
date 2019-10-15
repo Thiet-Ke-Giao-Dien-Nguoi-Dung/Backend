@@ -1,8 +1,7 @@
 #!/bin/bash
 
-
 cd ~/BTL/Backend
 git pull
-alias node=$1/node
+export PATH=$PATH:$1
 $1/npm install
-$2/pm2 restart backend
+$1/pm2 restart backend
