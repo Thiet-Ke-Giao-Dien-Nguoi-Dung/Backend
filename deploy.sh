@@ -3,5 +3,5 @@
 
 cd ~/BTL/Backend
 git pull
-$(echo $1)/npm install
-$(echo $2)/pm2 restart backend
+$1/npm install
+$2/pm2 restart backend
