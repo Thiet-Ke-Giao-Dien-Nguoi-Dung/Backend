@@ -6,7 +6,7 @@ const config = require("config");
 
 async function register(req, res) {
     try{
-        let {user_name, password, restaurant_name, restaurant_address} = req.body;
+        let {user_name, password, restaurant_name, restaurant_address, count_table} = req.body;
         if(!user_name || !password || !restaurant_address || !restaurant_name || !count_table){
             throw new Error("Something missing.")
         }
