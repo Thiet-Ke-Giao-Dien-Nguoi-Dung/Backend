@@ -11,6 +11,10 @@ module.exports = (sequelize, Sequelize) => {
         },
         update_time: {
             type: Sequelize.STRING
+        },
+        status: {
+            type: Sequelize.ENUM,
+            values: ["pending", "doing", "done"]
         }
     });
 

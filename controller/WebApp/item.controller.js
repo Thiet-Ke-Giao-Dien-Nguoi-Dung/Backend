@@ -9,7 +9,7 @@ const response = require("../../util/response");
 async function createItem(req, res) {
 
     let {id_restaurant} = req.params;
-    let {name, price} = req.body;
+    let {name, price, id_category} = req.body;
     try{
         if(!req.file){
             throw new Error("Vui lòng chọn ít nhất 1 ảnh.")

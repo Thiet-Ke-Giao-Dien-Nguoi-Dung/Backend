@@ -14,7 +14,7 @@ router.post("/login", UserController.login);
 router.post("/register", UserController.register);
 
 router.get("/restaurants", verifyAdmin, RestaurantController.getRestaurants);
-router.post("/restaurants", verifyAdmin, RestaurantController.createRestaurant);
+//router.post("/restaurants", verifyAdmin, RestaurantController.createRestaurant);
 router.put("/restaurants/:id_restaurant", verifyAdmin, RestaurantController.updateRestaurant);
 
 router.get("/restaurants/:id_restaurant/employees", verifyAdmin, EmployeesController.getEmployees);

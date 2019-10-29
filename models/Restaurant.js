@@ -21,9 +21,14 @@ module.exports = (sequelize, Sequelize) => {
         });
         Restaurant.hasMany(models.Table, {
             foreignKey: "id_restaurant",
-            sourceKey: "id_restaurant"
+            sourceKey: "id_restaurant",
+            onDelete: "cascade"
         });
         Restaurant.hasMany(models.Employees, {
+            foreignKey: "id_restaurant",
+            sourceKey: "id_restaurant"
+        });
+        Restaurant.hasMany(models.Category, {
             foreignKey: "id_restaurant",
             sourceKey: "id_restaurant"
         })

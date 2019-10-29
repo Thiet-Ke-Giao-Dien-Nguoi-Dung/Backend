@@ -6,8 +6,8 @@ const config = require("config");
 
 async function register(req, res) {
     try{
-        let {name, user_name, password} = req.body;
-        if(!name || !user_name || !password){
+        let {user_name, password, restaurant_name, restaurant_address} = req.body;
+        if(!user_name || !password || !restaurant_address || !restaurant_name){
             throw new Error("Something missing.")
         }
         if(password.length < 8){
@@ -24,10 +24,15 @@ async function register(req, res) {
         const saltRounds = 10;
         let salt = await bcrypt.genSalt(saltRounds);
         let new_pass = await bcrypt.hash(password, salt);
-        await db.User.create({
+        user = await db.User.create({
             user_name: user_name,
             password: new_pass,
             name: name
+        });
+        await db.Restaurant.create({
+            name: restaurant_name,
+            address: restaurant_address,
+            id_user: user.dataValues.id_user
         });
         return res.json(response.buildSuccess({}));
     }

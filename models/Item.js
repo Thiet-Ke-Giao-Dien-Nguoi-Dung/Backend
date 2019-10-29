@@ -26,6 +26,10 @@ module.exports = (sequelize, Sequelize) => {
             foreignKey: "id_restaurant",
             targetKey: "id_restaurant"
         });
+        Item.belongsTo(models.Category, {
+            foreignKey: "id_category",
+            targetKey: "id_category"
+        });
         Item.belongsToMany(models.Order, {
             through: models.OrderItem,
             as: "orders",
