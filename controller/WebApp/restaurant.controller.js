@@ -44,16 +44,26 @@ async function updateRestaurant(req, res) {
     try {
         let {id_restaurant} = req.params;
         if (req.body.count_table) {
-            await db.Table.destroy({
+            let tables = await db.Table.findAll({
                 where: {
                     id_restaurant: id_restaurant
                 }
             });
-            for (let i = 0; i < req.body.count_table; i++) {
-                await db.Table.create({
-                    location: `Bàn số ${i + 1}`,
-                    id_restaurant: id_restaurant
-                })
+            if(tables.length < req.body.count_table){
+                for (let i = tables.length; i < req.body.count_table; i++) {
+                    await db.Table.create({
+                        location: `Bàn số ${i + 1}`,
+                        id_restaurant: id_restaurant
+                    })
+                }
+            } else if(tables.length > req.body.count_table){
+                for(let i = req.body.count_table - 1; i < tables.length; i++){
+                    await db.Table.destroy({
+                        where: {
+                            id_table: tables[i].dataValues.id_table
+                        }
+                    })
+                }
             }
         }
         await db.Restaurant.update(req.body, {
@@ -61,6 +71,7 @@ async function updateRestaurant(req, res) {
                 id_restaurant: id_restaurant
             }
         });
+
         return res.json(response.buildSuccess({}))
     } catch (err) {
         console.log("updateRestaurant: ", err.message);

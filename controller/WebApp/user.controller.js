@@ -7,7 +7,7 @@ const config = require("config");
 async function register(req, res) {
     try{
         let {user_name, password, restaurant_name, restaurant_address} = req.body;
-        if(!user_name || !password || !restaurant_address || !restaurant_name){
+        if(!user_name || !password || !restaurant_address || !restaurant_name || !count_table){
             throw new Error("Something missing.")
         }
         if(password.length < 8){
@@ -29,11 +29,17 @@ async function register(req, res) {
             password: new_pass,
             name: name
         });
-        await db.Restaurant.create({
+        let restaurant = await db.Restaurant.create({
             name: restaurant_name,
             address: restaurant_address,
             id_user: user.dataValues.id_user
         });
+        for (let i = 0; i < count_table; i++) {
+            await db.Table.create({
+                location: `Bàn số ${i + 1}`,
+                id_restaurant: restaurant.dataValues.id_restaurant
+            })
+        }
         return res.json(response.buildSuccess({}));
     }
     catch(err){
