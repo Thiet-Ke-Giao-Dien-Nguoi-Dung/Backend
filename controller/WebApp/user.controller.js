@@ -5,9 +5,9 @@ const jwt = require("jsonwebtoken");
 const config = require("config");
 
 async function register(req, res) {
-    try {
-        let {user_name, password, restaurant_name, restaurant_address} = req.body;
-        if (!user_name || !password || !restaurant_address || !restaurant_name) {
+    try{
+        let {user_name, password, restaurant_name, restaurant_address, table_count, name} = req.body;
+        if(!user_name || !password || !restaurant_address || !restaurant_name || !table_count || !name){
             throw new Error("Something missing.")
         }
         if (password.length < 8) {
@@ -29,11 +29,18 @@ async function register(req, res) {
             password: new_pass,
             name: name
         });
-        await db.Restaurant.create({
+        let restaurant = await db.Restaurant.create({
             name: restaurant_name,
             address: restaurant_address,
-            id_user: user.dataValues.id_user
+            id_user: user.dataValues.id_user,
+            table_count: table_count
         });
+        for (let i = 0; i < table_count; i++) {
+            await db.Table.create({
+                location: `Bàn số ${i + 1}`,
+                id_restaurant: restaurant.dataValues.id_restaurant
+            })
+        }
         return res.json(response.buildSuccess({}));
     } catch (err) {
         console.log("register: ", err.message);
@@ -84,8 +91,32 @@ async function login(req, res) {
     }
 }
 
+async function changePassword(req, res){
+    let {new_password} = req.body;
+    try{
+        if(!new_password){
+            throw new Error("Missing new password");
+        }
+        const saltRounds = 10;
+        let salt = await bcrypt.genSalt(saltRounds);
+        let new_pass = await bcrypt.hash(new_password, salt);
+        await db.User.update({
+            password: new_pass
+        },{
+            where: {
+                id_user: req.tokenData.id_user
+            }
+        });
+        return res.json(response.buildSuccess({}))
+    }
+    catch (err) {
+        console.log("changePassword: ", err.message);
+        return res.json(response.buildFail(err.message))
+    }
+}
 
 module.exports = {
     login,
-    register
+    register,
+    changePassword
 };

@@ -13,6 +13,14 @@ async function addEmployees(req, res) {
         if(password.length < 8){
             throw new Error("Mật khẩu phải có ít nhất 8 kí tự.")
         }
+        let employees = await Employees.findOne({
+            where: {
+                user_name: user_name
+            }
+        });
+        if(employees){
+            throw new Error("User name đã tồn tại.")
+        }
         const saltRounds = 10;
         let salt = await bcrypt.genSalt(saltRounds);
         req.body.password = await bcrypt.hash(password, salt);
@@ -51,6 +59,15 @@ async function getEmployees(req, res){
 async function deleteEmployees(req, res){
     try{
         let {id_restaurant, id_employees} = req.params;
+        let employees = await Employees.findOne({
+            where: {
+                id_restaurant: id_restaurant,
+                id_employees: id_employees
+            }
+        });
+        if(!employees){
+            throw new Error("Nhân viên này không thuộc cửa hàng của bạn.")
+        }
         await Employees.destroy({
             where: {
                 id_employees: id_employees
@@ -67,10 +84,19 @@ async function deleteEmployees(req, res){
 async function updateEmployees(req, res){
     try{
         let {id_restaurant, id_employees} = req.params;
-        if(req.body.password){
+        let employees = await Employees.findOne({
+            where: {
+                id_restaurant: id_restaurant,
+                id_employees: id_employees
+            }
+        });
+        if(!employees){
+            throw new Error("Nhân viên này không thuộc cửa hàng của bạn.")
+        }
+        if(req.body.new_password){
             const saltRounds = 10;
             let salt = await bcrypt.genSalt(saltRounds);
-            req.body.password = await bcrypt.hash(req.body.password, salt);
+            req.body.password = await bcrypt.hash(req.body.new_password, salt);
         }
         await Employees.update(req.body, {
             where: {

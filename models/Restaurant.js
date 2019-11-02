@@ -11,6 +11,9 @@ module.exports = (sequelize, Sequelize) => {
         },
         address: {
             type: Sequelize.STRING
+        },
+        table_count: {
+            type: Sequelize.INTEGER
         }
     });
 
