@@ -5,12 +5,12 @@ const jwt = require("jsonwebtoken");
 const config = require("config");
 
 async function register(req, res) {
-    try{
+    try {
         let {user_name, password, restaurant_name, restaurant_address} = req.body;
-        if(!user_name || !password || !restaurant_address || !restaurant_name){
+        if (!user_name || !password || !restaurant_address || !restaurant_name) {
             throw new Error("Something missing.")
         }
-        if(password.length < 8){
+        if (password.length < 8) {
             throw new Error("Mật khẩu phải có ít nhất 8 kí tự.")
         }
         let user = await db.User.findOne({
@@ -18,7 +18,7 @@ async function register(req, res) {
                 user_name: user_name
             }
         });
-        if(user){
+        if (user) {
             throw new Error("Tài khoản này đã có người sử dụng.")
         }
         const saltRounds = 10;
@@ -35,18 +35,17 @@ async function register(req, res) {
             id_user: user.dataValues.id_user
         });
         return res.json(response.buildSuccess({}));
-    }
-    catch(err){
-        console.log("register: ", err.message );
+    } catch (err) {
+        console.log("register: ", err.message);
         return res.json(response.buildFail(err.message))
     }
 }
 
 
 async function login(req, res) {
-    try{
+    try {
         let {user_name, password} = req.body;
-        if(!user_name || !password){
+        if (!user_name || !password) {
             throw new Error("Something missing.")
         }
         let user = await db.User.findOne({
@@ -54,25 +53,33 @@ async function login(req, res) {
                 user_name: user_name
             }
         });
-        if(!user){
+        if (!user) {
             throw new Error("Tài khoản không tồn tại.")
-        }else{
+        } else {
             let check = await bcrypt.compare(password, user.dataValues.password);
-            if(check){
+            if (check) {
+                let restaurant = await db.Restaurant.findOne({
+                    where: {
+                        id_user: user.dataValues.id_user
+                    }
+                });
                 const oneDay = 1000 * 60 * 60 * 24;
                 const token = jwt.sign({
-                    id_user: user.dataValues.id_user
+                    id_user: user.dataValues.id_user,
                 }, config.get("secretTokenAdmin"), {
                     expiresIn: oneDay
                 });
-                return res.json(response.buildSuccess({token}))
-            }else{
+                return res.json(response.buildSuccess({
+                        token,
+                        id_restaurant: restaurant.dataValues.id_restaurant
+                    }
+                ))
+            } else {
                 throw new Error("Mật khẩu không chính xác.")
             }
         }
-    }
-    catch(err){
-        console.log("login: ", err.message );
+    } catch (err) {
+        console.log("login: ", err.message);
         return res.json(response.buildFail(err.message))
     }
 }
