@@ -92,10 +92,19 @@ async function login(req, res) {
 }
 
 async function changePassword(req, res){
-    let {new_password} = req.body;
+    let {new_password, password} = req.body;
     try{
-        if(!new_password){
-            throw new Error("Missing new password");
+        if(!new_password || !password){
+            throw new Error("Something missing.");
+        }
+        let user = await db.User.findOne({
+            where: {
+                id_user: req.tokenData.id_user
+            }
+        });
+        let check = await bcrypt.compare(password, user.dataValues.password);
+        if(!check){
+            throw new Error("Mật khẩu cũ không đúng.")
         }
         const saltRounds = 10;
         let salt = await bcrypt.genSalt(saltRounds);
