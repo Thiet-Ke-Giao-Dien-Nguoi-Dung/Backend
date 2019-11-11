@@ -32,7 +32,8 @@ async function createItem(req, res) {
             ...req.body,
             status: "in_stock",
             id_restaurant,
-            image: url
+            image: url,
+            id_category
         });
         return res.json(response.buildSuccess({}))
     }
@@ -81,6 +82,13 @@ async function updateItem(req, res) {
 async function getItems(req, res){
     try{
         let {id_restaurant} = req.params;
+        let {id_category} = req.query;
+        let constrains = {
+            id_restaurant: id_restaurant
+        };
+        if(id_category){
+            constrains.id_category = id_category
+        }
         let restaurant = await Restaurant.findOne({
             where: {
                 id_restaurant: id_restaurant,
@@ -91,9 +99,7 @@ async function getItems(req, res){
             throw new Error("Bạn không phải là chủ nhà hàng này.")
         }
         let items = await Item.findAll({
-            where: {
-                id_restaurant: id_restaurant
-            },
+            where: constrains,
             order: [
                 ["price", 'ASC']
             ]
