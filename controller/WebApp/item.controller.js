@@ -14,17 +14,8 @@ async function createItem(req, res) {
         if(!req.file){
             throw new Error("Vui lòng chọn ít nhất 1 ảnh.")
         }
-        if(!name || !price){
+        if(!name || !price || !id_category){
             throw new Error("Some thing missing");
-        }
-        let restaurant = await Restaurant.findOne({
-            where: {
-                id_restaurant: id_restaurant,
-                id_user: req.tokenData.id_user
-            }
-        });
-        if(!restaurant){
-            throw new Error("Bạn không thể thêm item cho quán này.")
         }
         let type = req.file.originalname.split(".")[req.file.originalname.split(".").length - 1];
         let url = await uploadImageToS3(req.file.buffer, type);
@@ -46,15 +37,6 @@ async function createItem(req, res) {
 async function updateItem(req, res) {
     let {id_restaurant, id_item} = req.params;
     try{
-        let restaurant = await Restaurant.findOne({
-            where: {
-                id_restaurant: id_restaurant,
-                id_user: req.tokenData.id_user
-            }
-        });
-        if(!restaurant){
-            throw new Error("Bạn không thể thêm item cho quán này.")
-        }
         let item = await Item.findOne({
             where: {
                 id_item: id_item,
@@ -62,7 +44,7 @@ async function updateItem(req, res) {
             }
         });
         if(!item){
-            throw new Error("Bạn không thể cập nhật item này.")
+            throw new Error("Item này không thuộc cửa hàng của bạn.")
         }
         await Item.update({
             ...req.body
