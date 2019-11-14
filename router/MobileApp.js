@@ -7,6 +7,7 @@ const VerifyEmployees = require("../middleware/verifyEmployees");
 router.get("/ping", (req, res) => {
    res.send("pong")
 });
+
 router.get("/restaurants/:id_restaurant/items", VerifyEmployees, ItemAndOrder.getItems);
 router.get("/restaurants/:id_restaurant/tables", VerifyEmployees, ItemAndOrder.getTables);
 router.get("/restaurants/:id_restaurant/categories", VerifyEmployees, ItemAndOrder.getCategories);
