@@ -15,6 +15,13 @@ module.exports = (sequelize, Sequelize) => {
         status: {
             type: Sequelize.ENUM,
             values: ["pending", "doing", "done"]
+        },
+        id_restaurant: {
+            type: Sequelize.INTEGER
+        },
+        is_payment: {
+            type: Sequelize.BOOLEAN,
+            defaultValue: false
         }
     });
 
