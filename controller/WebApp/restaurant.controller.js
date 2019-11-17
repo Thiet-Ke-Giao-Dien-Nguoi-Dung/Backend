@@ -51,15 +51,15 @@ async function updateRestaurant(req, res) {
                     id_restaurant: id_restaurant
                 }
             });
-            if(tables.length < req.body.table_count){
+            if (tables.length < req.body.table_count) {
                 for (let i = tables.length; i < req.body.table_count; i++) {
                     await db.Table.create({
                         location: `Bàn số ${i + 1}`,
                         id_restaurant: id_restaurant
                     })
                 }
-            } else if(tables.length > req.body.table_count){
-                for(let i = req.body.table_count; i < tables.length; i++){
+            } else if (tables.length > req.body.table_count) {
+                for (let i = req.body.table_count; i < tables.length; i++) {
                     await db.Table.destroy({
                         where: {
                             id_table: tables[i].dataValues.id_table
@@ -81,21 +81,22 @@ async function updateRestaurant(req, res) {
     }
 }
 
-async function createCategory(req, res){
+async function createCategory(req, res) {
     let {category_name} = req.body;
     let {id_restaurant} = req.params;
-    try{
+    try {
+        console.log(req.body);
         let category = await Category.findOne({
             where: {
-                name:category_name,
+                name: category_name,
                 id_restaurant: id_restaurant
             }
         });
-        if(category){
+        if (category) {
             throw new Error("Danh mục này đã tồn tại.")
         }
         await Category.create({
-            name:category_name,
+            name: category_name,
             id_restaurant: id_restaurant
         });
         return res.json(response.buildSuccess({}))
@@ -105,9 +106,9 @@ async function createCategory(req, res){
     }
 }
 
-async function getCategories(req, res){
+async function getCategories(req, res) {
     let {id_restaurant} = req.params;
-    try{
+    try {
         let categories = await Category.findAll({
             where: {
                 id_restaurant: id_restaurant
@@ -117,52 +118,52 @@ async function getCategories(req, res){
             ]
         });
         const data = {
-          categories: categories || []
+            categories: categories || []
         };
         return res.json(response.buildSuccess(data))
-    }catch (err) {
+    } catch (err) {
         console.log("getCategories: ", err.message);
         return res.json(response.buildFail(err.message))
     }
 }
 
-async function updateCategory(req, res){
+async function updateCategory(req, res) {
     let {category_name} = req.body;
     let {id_restaurant, id_category} = req.params;
-    try{
+    try {
         let category = await Category.findOne({
             where: {
                 id_restaurant: id_restaurant,
                 id_category: id_category
             }
         });
-        if(!category){
+        if (!category) {
             throw new Error("Danh mục không tồn tại.")
         }
         await Category.update({
             name: category_name
-        },{
+        }, {
             where: {
                 id_category: id_category
             }
         });
         return res.json(response.buildSuccess({}))
-    }catch (err) {
+    } catch (err) {
         console.log("updateCategory: ", err.message);
         return res.json(response.buildFail(err.message))
     }
 }
 
-async function deleteCategory(req, res){
+async function deleteCategory(req, res) {
     let {id_restaurant, id_category} = req.params;
-    try{
+    try {
         let category = await Category.findOne({
             where: {
                 id_restaurant: id_restaurant,
                 id_category: id_category
             }
         });
-        if(!category){
+        if (!category) {
             throw new Error("Danh mục không tồn tại.")
         }
         let item = await db.Item.findOne({
@@ -171,7 +172,7 @@ async function deleteCategory(req, res){
                 id_category: id_category
             }
         });
-        if(item){
+        if (item) {
             throw new Error("Không thể xoá danh mục này. Một số item trong cửa hàng của bạn đang sử dụng danh mục này.")
         }
         await Category.destroy({
@@ -180,8 +181,7 @@ async function deleteCategory(req, res){
             }
         });
         return res.json(response.buildSuccess({}))
-    }
-    catch (err) {
+    } catch (err) {
         console.log("deleteCategory: ", err.message);
         return res.json(response.buildFail(err.message))
     }
