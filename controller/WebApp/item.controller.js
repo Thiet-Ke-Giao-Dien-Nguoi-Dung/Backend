@@ -64,12 +64,15 @@ async function updateItem(req, res) {
 async function getItems(req, res){
     try{
         let {id_restaurant} = req.params;
-        let {id_category} = req.query;
+        let {id_category, is_delete} = req.query;
         let constrains = {
             id_restaurant: id_restaurant
         };
         if(id_category){
             constrains.id_category = id_category
+        }
+        if(is_delete){
+            constrains.is_delete = is_delete
         }
         let restaurant = await Restaurant.findOne({
             where: {

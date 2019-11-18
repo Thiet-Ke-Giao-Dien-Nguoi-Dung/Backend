@@ -18,6 +18,10 @@ module.exports = (sequelize, Sequelize) => {
         status: {
             type: Sequelize.ENUM,
             values: ["in_stock", "out_of_stock"]
+        },
+        is_delete: {
+            type: Sequelize.BOOLEAN,
+            defaultValue: false
         }
     });
 
