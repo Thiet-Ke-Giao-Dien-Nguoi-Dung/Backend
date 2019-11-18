@@ -2,6 +2,7 @@ const db = require("../../models/index");
 const Restaurant = db.Restaurant;
 const Category = db.Category;
 const response = require("../../util/response");
+const createUrl = require("../../util/s3/createUrl");
 
 async function getRestaurants(req, res) {
     try {
@@ -85,7 +86,6 @@ async function createCategory(req, res) {
     let {category_name} = req.body;
     let {id_restaurant} = req.params;
     try {
-        console.log(req.body);
         let category = await Category.findOne({
             where: {
                 name: category_name,
@@ -187,6 +187,92 @@ async function deleteCategory(req, res) {
     }
 }
 
+async function getRevenue(req, res){
+    try{
+        let {id_restaurant} = req.params;
+        let {from, to} = req.query;
+        let sql = "SELECT \n" +
+            "    O.create_time, O.id_restaurant, SUM(I.price) AS revenue\n" +
+            "FROM\n" +
+            "    `Order` AS O\n" +
+            "        INNER JOIN\n" +
+            "    OrderItem AS OI ON OI.id_order = O.id_order\n" +
+            "        INNER JOIN\n" +
+            "    Item AS I ON OI.id_item = I.id_item\n" +
+            "WHERE\n" +
+            "    O.status = 'done'\n" +
+            "        AND O.id_restaurant = :id_restaurant\n" +
+            "        AND (create_time BETWEEN :from AND :to)\n" +
+            "        AND is_payment = 1\n" +
+            "GROUP BY O.create_time\n" +
+            "ORDER BY O.create_time ASC";
+        let revenues = await db.sequelize.query(sql, {
+            replacements: {
+                id_restaurant: id_restaurant,
+                from: from,
+                to: to
+            },
+            type: db.sequelize.QueryTypes.SELECT
+        });
+        return res.json(response.buildSuccess({revenues}))
+    }
+    catch(err){
+        console.log("getRevenue: ", err.message);
+        return res.json(response.buildFail(err.message))
+    }
+}
+
+async function statisticItemInRestaurant(req, res){
+    try{
+        let {id_restaurant} = req.params;
+        let {from, to, page_size, page_number} = req.query;
+        if(!page_size){
+            page_size = 20;
+        }else{
+            page_size = parseInt(page_size)
+        }
+        if(!page_number){
+            page_number = 0;
+        }else{
+            page_number = parseInt(page_number)
+        }
+        let sql = "SELECT \n" +
+            "    sum(OI.quantity) as order_count, I.name, I.image\n" +
+            "FROM\n" +
+            "    `Order` AS O\n" +
+            "        INNER JOIN\n" +
+            "    OrderItem AS OI ON OI.id_order = O.id_order\n" +
+            "        INNER JOIN\n" +
+            "    Item AS I ON OI.id_item = I.id_item\n" +
+            "WHERE\n" +
+            "    O.status = 'done'\n" +
+            "        AND O.id_restaurant = :id_restaurant\n" +
+            "        AND (create_time BETWEEN :from AND :to)\n" +
+            "        AND is_payment = 1\n" +
+            "GROUP BY I.id_item\n" +
+            "ORDER BY order_count DESC";
+        let list_item = await db.sequelize.query(sql, {
+            replacements: {
+                id_restaurant: id_restaurant,
+                from: from,
+                to: to
+            },
+            type: db.sequelize.QueryTypes.SELECT
+        });
+        let items = [];
+        for(let i = page_size * page_number; i < page_size * (page_number + 1); i++){
+            if(list_item[i]){
+                list_item[i].image = await createUrl(list_item[i].image);
+                items.push(list_item[i]);
+            }
+        }
+        return res.json(response.buildSuccess({items}))
+    }
+    catch(err){
+        console.log("statisticItemInRestaurant: ", err.message);
+    }
+}
+
 module.exports = {
     getRestaurants,
     //createRestaurant,
@@ -194,5 +280,7 @@ module.exports = {
     createCategory,
     getCategories,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    getRevenue,
+    statisticItemInRestaurant
 };

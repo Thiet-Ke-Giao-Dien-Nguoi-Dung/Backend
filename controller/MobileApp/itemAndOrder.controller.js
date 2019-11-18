@@ -3,6 +3,7 @@ const Employees = db.Employees;
 const Item = db.Item;
 const response = require("../../util/response");
 const createUrl = require("../../util/s3/createUrl");
+const moment = require("moment");
 
 async function getItems(req, res){
     let {id_restaurant} = req.params;
@@ -91,7 +92,6 @@ async function createOrder(req, res){
     try{
         let {items} = req.body;
         let {id_restaurant, id_table} = req.params;
-        console.log(req.params);
         let order = await db.Order.findOne({
             where: {
                 [db.Sequelize.Op.or]: [
@@ -110,8 +110,8 @@ async function createOrder(req, res){
         }
         order = await db.Order.create({
             id_table: parseInt(id_table),
-            create_time: Date.now(),
-            update_time: Date.now(),
+            create_time: moment(parseInt(Date.now())).format("YYYY/MM/DD"),
+            update_time: moment(parseInt(Date.now())).format("YYYY/MM/DD"),
             status: "pending",
             id_restaurant: id_restaurant
         });
@@ -133,19 +133,6 @@ async function createOrder(req, res){
 async function getOrderFromTable(req, res){
     try{
         let {id_restaurant, id_table} = req.params;
-        // let order = await db.Order.findOne({
-        //     where: {
-        //         is_payment: false,
-        //         id_restaurant: id_restaurant,
-        //         id_table: id_table
-        //     },
-        //     include: [
-        //         {
-        //             model: db.OrderItem,
-        //             as: "items"
-        //         }
-        //     ]
-        // });
         let sql = "SELECT \n" +
             "    O.id_order,\n" +
             "    O.create_time,\n" +
