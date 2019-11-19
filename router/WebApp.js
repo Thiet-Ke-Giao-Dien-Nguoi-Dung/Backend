@@ -29,6 +29,8 @@ router.get("/restaurants/:id_restaurant/categories", verifyAdmin, verifyRestaura
 router.post("/restaurants/:id_restaurant/categories", verifyAdmin, verifyRestaurant, RestaurantController.createCategory);
 router.put("/restaurants/:id_restaurant/categories/:id_category", verifyAdmin, verifyRestaurant, RestaurantController.updateCategory);
 router.delete("/restaurants/:id_restaurant/categories/:id_category", verifyAdmin, verifyRestaurant, RestaurantController.deleteCategory);
+router.get("/restaurants/:id_restaurant/revenues", verifyAdmin, verifyRestaurant, RestaurantController.getRevenue);
+router.get("/restaurants/:id_restaurant/statistic", verifyAdmin, verifyRestaurant, RestaurantController.statisticItemInRestaurant);
 
 router.get("/restaurants/:id_restaurant/items", verifyAdmin, verifyRestaurant, ItemController.getItems);
 router.post("/restaurants/:id_restaurant/items", verifyAdmin, verifyRestaurant, uploadImage, ItemController.createItem);
