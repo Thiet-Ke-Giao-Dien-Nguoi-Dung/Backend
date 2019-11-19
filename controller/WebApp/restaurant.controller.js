@@ -191,6 +191,9 @@ async function getRevenue(req, res){
     try{
         let {id_restaurant} = req.params;
         let {from, to} = req.query;
+        if(!from || !to){
+            throw new Error("Something missing");
+        }
         let sql = "SELECT \n" +
             "    O.create_time, O.id_restaurant, SUM(I.price) AS revenue\n" +
             "FROM\n" +
@@ -237,7 +240,7 @@ async function statisticItemInRestaurant(req, res){
             page_number = parseInt(page_number)
         }
         let sql = "SELECT \n" +
-            "    sum(OI.quantity) as order_count, I.name, I.image\n" +
+            "    sum(OI.quantity) as order_count, I.name, I.image, I.price\n" +
             "FROM\n" +
             "    `Order` AS O\n" +
             "        INNER JOIN\n" +

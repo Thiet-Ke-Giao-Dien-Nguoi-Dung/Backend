@@ -7,6 +7,7 @@ const UserController = require("../controller/WebApp/user.controller");
 const RestaurantController = require("../controller/WebApp/restaurant.controller");
 const EmployeesController = require("../controller/WebApp/employees.controller");
 const ItemController = require("../controller/WebApp/item.controller");
+const OrderController = require("../controller/WebApp/order.controller");
 
 router.get("/ping", (req, res) => {
     res.send("pong")
@@ -35,5 +36,7 @@ router.get("/restaurants/:id_restaurant/statistic", verifyAdmin, verifyRestauran
 router.get("/restaurants/:id_restaurant/items", verifyAdmin, verifyRestaurant, ItemController.getItems);
 router.post("/restaurants/:id_restaurant/items", verifyAdmin, verifyRestaurant, uploadImage, ItemController.createItem);
 router.put("/restaurants/:id_restaurant/items/:id_item", verifyAdmin, verifyRestaurant, ItemController.updateItem);
+
+router.get("/restaurants/:id_restaurant/orders", verifyAdmin, verifyRestaurant, OrderController.getOrders);
 
 module.exports = router;
