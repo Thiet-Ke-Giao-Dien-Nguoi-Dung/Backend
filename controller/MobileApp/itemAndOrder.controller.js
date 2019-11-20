@@ -122,6 +122,13 @@ async function createOrder(req, res){
                id_item: e.id_item
            })
         }
+        await db.Table.update({
+            is_ordered: true
+        },{
+            where: {
+                id_table: id_table
+            }
+        });
         return res.json(response.buildSuccess({}))
     }
     catch(err){
