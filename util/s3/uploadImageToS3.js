@@ -1,6 +1,6 @@
 const s3 = require('./s3Config.js');
 const BUCKET = require("config").get("bucket");
-const Jimp = require("jimp");
+//const Jimp = require("jimp");
 
 async function resize(image, width, height) {
     image = await Jimp.read(image);
