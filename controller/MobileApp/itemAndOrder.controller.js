@@ -111,7 +111,7 @@ async function createOrder(req, res){
         order = await db.Order.create({
             id_table: parseInt(id_table),
             create_time: moment(parseInt(Date.now())).format("YYYY/MM/DD"),
-            update_time: moment(parseInt(Date.now())).format("YYYY/MM/DD"),
+            update_time: Date.now(),
             status: "pending",
             id_restaurant: id_restaurant
         });
@@ -122,6 +122,13 @@ async function createOrder(req, res){
                id_item: e.id_item
            })
         }
+        await db.Table.update({
+            is_ordered: true
+        },{
+            where: {
+                id_table: id_table
+            }
+        });
         return res.json(response.buildSuccess({}))
     }
     catch(err){

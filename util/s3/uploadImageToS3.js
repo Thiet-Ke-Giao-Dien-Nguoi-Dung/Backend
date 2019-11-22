@@ -1,5 +1,15 @@
 const s3 = require('./s3Config.js');
 const BUCKET = require("config").get("bucket");
+//const Jimp = require("jimp");
+
+async function resize(image, width, height) {
+    image = await Jimp.read(image);
+
+    return image
+        .resize(width, height)
+        .quality(60)
+        .getBufferAsync(Jimp.AUTO);
+}
 
 function promiseUpload(s3, params) {
     return new Promise((resolve, reject) => {

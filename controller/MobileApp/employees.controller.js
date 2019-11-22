@@ -39,6 +39,40 @@ async function login(req, res) {
     }
 }
 
+async function changePassword(req, res){
+    try{
+        let {old_password, new_password} = req.body;
+        if(!new_password || !old_password){
+            throw new Error("Something missing.");
+        }
+        let employees = await db.Employees.findOne({
+            where: {
+                id_employees: req.tokenData.id_employees
+            }
+        });
+        let check = await bcrypt.compare(old_password, employees.dataValues.password);
+        if(!check){
+            throw new Error("Mật khẩu cũ không đúng.")
+        }
+        const saltRounds = 10;
+        let salt = await bcrypt.genSalt(saltRounds);
+        let new_pass = await bcrypt.hash(new_password, salt);
+        await db.Employees.update({
+            password: new_pass
+        },{
+            where: {
+                id_employees: req.tokenData.id_employees
+            }
+        });
+        return res.json(response.buildSuccess({}))
+    }
+    catch(err){
+        console.log("changePassword: ", err.message);
+        return res.json(response.buildFail(err.message))
+    }
+}
+
 module.exports = {
-    login
+    login,
+    changePassword
 };
