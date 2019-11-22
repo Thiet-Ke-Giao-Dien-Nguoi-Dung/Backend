@@ -64,7 +64,17 @@ async function updateItem(req, res) {
 async function getItems(req, res){
     try{
         let {id_restaurant} = req.params;
-        let {id_category, is_delete} = req.query;
+        let {id_category, is_delete, page_size, page_number} = req.query;
+        if(!page_number){
+            page_number = 0
+        }else{
+            page_number = parseInt(page_number)
+        }
+        if(!page_size){
+            page_size = 20
+        }else{
+            page_size = parseInt(page_size)
+        }
         let constrains = {
             id_restaurant: id_restaurant
         };
@@ -83,17 +93,21 @@ async function getItems(req, res){
         if(!restaurant){
             throw new Error("Bạn không phải là chủ nhà hàng này.")
         }
-        let items = await Item.findAll({
+        let items = await Item.findAndCountAll({
             where: constrains,
             order: [
                 ["price", 'ASC']
-            ]
+            ],
+            limit: page_size,
+            offset: page_size * page_number
         });
-        items = items.map(e => e.dataValues);
-        for(let e of items){
+        let data = {};
+        data.count = items.count;
+        data.items = items.rows.map(e => e.dataValues);
+        for(let e of data.items){
             e.image = await createUrl(e.image)
         }
-        res.json(response.buildSuccess({items}))
+        res.json(response.buildSuccess(data))
     }
     catch(err){
         console.log("getItems: ", err.message );

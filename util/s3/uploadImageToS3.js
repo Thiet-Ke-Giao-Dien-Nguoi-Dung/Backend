@@ -1,6 +1,6 @@
 const s3 = require('./s3Config.js');
 const BUCKET = require("config").get("bucket");
-//const Jimp = require("jimp");
+const Jimp = require("jimp");
 
 async function resize(image, width, height) {
     image = await Jimp.read(image);
@@ -25,11 +25,12 @@ function promiseUpload(s3, params) {
 
 async function uploadImageToS3(data, type) {
     try {
+        let img = await resize(data, 50, 50);
         let key = Date.now() + "_" + parseInt(Math.random() * 1000) + "." + type;
         let params = {
             Bucket: BUCKET,
             Key: key,
-            Body: data
+            Body: img
         };
         await promiseUpload(s3, params);
         return key;
