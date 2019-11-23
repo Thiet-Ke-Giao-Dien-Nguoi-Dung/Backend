@@ -195,7 +195,7 @@ async function getRevenue(req, res){
             throw new Error("Something missing");
         }
         let sql = "SELECT \n" +
-            "    O.create_time, O.id_restaurant, SUM(I.price) AS revenue\n" +
+            "    O.create_time, O.id_restaurant, SUM(I.price * OI.quantity) AS revenue\n" +
             "FROM\n" +
             "    `Order` AS O\n" +
             "        INNER JOIN\n" +
@@ -205,8 +205,7 @@ async function getRevenue(req, res){
             "WHERE\n" +
             "    O.status = 'done'\n" +
             "        AND O.id_restaurant = :id_restaurant\n" +
-            "        AND (create_time BETWEEN :from AND :to)\n" +
-            "        AND is_payment = 1\n" +
+            "        AND (create_time BETWEEN :from AND :to)\n"+
             "GROUP BY O.create_time\n" +
             "ORDER BY O.create_time ASC";
         let revenues = await db.sequelize.query(sql, {
