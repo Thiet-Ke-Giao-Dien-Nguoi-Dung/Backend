@@ -10,7 +10,7 @@ deploy:
   - provider: script
     skip_cleanup: true
     script:
-      - ssh -i quanht.pem -o StrictHostKeyChecking=no ubuntu@ec2-18-162-115-131.ap-east-1.compute.amazonaws.com 'bash -s' < deploy.sh $nodeHome
+      - ssh -i quanht.pem -o StrictHostKeyChecking=no ubuntu@18.162.151.91 'bash -s' < deploy.sh $nodeHome
     on:
       branch: dev
 branches:

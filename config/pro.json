@@ -1,9 +1,9 @@
 {
   "port": 3001,
   "database": {
-    "host": "mydb.crbcclnwhqvy.ap-southeast-1.rds.amazonaws.com",
+    "host": "18.162.151.91",
     "port": 3306,
-    "user": "quanht",
+    "user": "root",
     "password": "23061999",
     "name": "ETO"
   },
