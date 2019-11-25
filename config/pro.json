@@ -4,7 +4,7 @@
     "host": "18.162.151.91",
     "port": 3306,
     "user": "root",
-    "password": "23061999",
+    "password": "23041999",
     "name": "ETO"
   },
   "secretTokenAdmin": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
