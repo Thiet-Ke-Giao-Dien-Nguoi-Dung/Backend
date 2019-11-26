@@ -6,9 +6,9 @@ const moment = require("moment");
 async function getOrders(req, res) {
     try{
         let {id_restaurant} = req.params;
-        let {status, time} = req.query;
-        // let time = Date.now();
-        // time = moment(time).format("YYYY/MM/DD");
+        let {status} = req.query;
+        let time = Date.now();
+        time = moment(time).format("YYYY/MM/DD");
         let orders = await db.Order.findAll({
             where: {
                 id_restaurant: id_restaurant,

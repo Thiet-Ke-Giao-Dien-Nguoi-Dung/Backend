@@ -129,6 +129,7 @@ async function createOrder(req, res){
                 id_table: id_table
             }
         });
+        await req.io.sockets.emit("create_order_" + id_restaurant, {msg: "created new order."});
         return res.json(response.buildSuccess({}))
     }
     catch(err){

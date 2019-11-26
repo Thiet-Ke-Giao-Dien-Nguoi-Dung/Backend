@@ -27,7 +27,7 @@ async function login(req, res) {
                 }, config.get("secretTokenEmployees"), {
                     expiresIn: oneDay
                 });
-                return res.json(response.buildSuccess({token}))
+                return res.json(response.buildSuccess({token, id_restaurant: user.dataValues.id_restaurant}))
             }else{
                 throw new Error("Mật khẩu không chính xác.")
             }
