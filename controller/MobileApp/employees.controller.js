@@ -79,7 +79,25 @@ async function changePassword(req, res){
     }
 }
 
+async function getProfile(req, res){
+    try{
+        let id_employees = req.tokenData.id_employees;
+        let employees = await db.Employees.findOne({
+            where: {
+                id_employees: id_employees
+            },
+            attributes: ['name', 'phone_number', 'user_name']
+        });
+        return res.json(response.buildSuccess({employees}))
+    }
+    catch(err){
+        console.log("getProfile: ", err.message);
+        return res.json(response.buildFail(err.message))
+    }
+}
+
 module.exports = {
     login,
-    changePassword
+    changePassword,
+    getProfile
 };

@@ -17,6 +17,7 @@ router.get("/restaurants/:id_restaurant/tables/:id_table/orders", VerifyEmployee
 
 router.post("/login", Employees.login);
 router.put("/password", VerifyEmployees, Employees.changePassword);
+router.get("/profiles", VerifyEmployees, Employees.getProfile);
 
 
 module.exports = router;

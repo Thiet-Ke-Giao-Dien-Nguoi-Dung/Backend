@@ -81,8 +81,38 @@ async function changeStatusOfOrder(req, res){
 }
 
 
+async function getOrder(req, res){
+    try{
+        let {id_restaurant, id_order} = req.params;
+        let order = await db.Order.findAll({
+            where: {
+                id_restaurant: id_restaurant,
+                id_order: id_order
+            },
+            attributes: ['id_order', 'status', 'create_time', 'update_time'],
+            include: [
+                {
+                    model: db.Table,
+                    attributes: ['id_table', 'location']
+                },
+                {
+                    model: db.Item,
+                    as: 'items',
+                    attributes: ['name', 'price']
+                }
+            ]
+        });
+        return res.json(response.buildSuccess({order}));
+    }
+    catch (err) {
+        console.log("getOrder: ", err.message);
+        return res.json(response.buildFail(err.message))
+    }
+}
+
 
 module.exports = {
     getOrders,
-    changeStatusOfOrder
+    changeStatusOfOrder,
+    getOrder
 };
