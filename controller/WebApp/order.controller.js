@@ -84,7 +84,7 @@ async function changeStatusOfOrder(req, res){
 async function getOrder(req, res){
     try{
         let {id_restaurant, id_order} = req.params;
-        let order = await db.Order.findAll({
+        let order = await db.Order.findOne({
             where: {
                 id_restaurant: id_restaurant,
                 id_order: id_order
@@ -102,6 +102,11 @@ async function getOrder(req, res){
                 }
             ]
         });
+        let sum = 0;
+        order.dataValues.items.forEach(e => {
+            sum = sum + e.dataValues.price *  e.dataValues.OrderItem.dataValues.quantity;
+        });
+        order.dataValues.revenue = sum;
         return res.json(response.buildSuccess({order}));
     }
     catch (err) {
