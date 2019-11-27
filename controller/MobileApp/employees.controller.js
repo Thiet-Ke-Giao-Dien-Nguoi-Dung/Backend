@@ -27,7 +27,14 @@ async function login(req, res) {
                 }, config.get("secretTokenEmployees"), {
                     expiresIn: oneDay
                 });
-                return res.json(response.buildSuccess({token, id_restaurant: user.dataValues.id_restaurant}))
+                let restaurant = await db.Restaurant.findOne({
+                    where: {
+                        id_restaurant: user.dataValues.id_restaurant
+                    },
+                    attributes: ['id_restaurant', 'name', 'address']
+                });
+                restaurant = restaurant.dataValues;
+                return res.json(response.buildSuccess({token, restaurant: restaurant}))
             }else{
                 throw new Error("Mật khẩu không chính xác.")
             }
