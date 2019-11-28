@@ -7,7 +7,7 @@ const moment = require("moment");
 
 async function getItems(req, res){
     let {id_restaurant} = req.params;
-    let {id_category} = req.query;
+    // let {id_category} = req.query;
     try{
         let employees = await Employees.findOne({
             where: {
@@ -21,9 +21,9 @@ async function getItems(req, res){
         const constrains = {
             id_restaurant: employees.dataValues.id_restaurant
         };
-        if(id_category){
-            constrains.id_category = id_category;
-        }
+        // if(id_category){
+        //     constrains.id_category = id_category;
+        // }
         let items = await Item.findAll({
             where: constrains,
             order: [

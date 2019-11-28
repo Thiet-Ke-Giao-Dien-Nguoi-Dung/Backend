@@ -30,13 +30,13 @@ async function getCategoryInRestaurant(req, res){
 async function getItemInCategory(req, res){
     try{
         let {id_restaurant} = req.params;
-        let {id_category} = req.query;
+        // let {id_category} = req.query;
         let constrains = {
             id_restaurant: id_restaurant
         };
-        if(id_category){
-            constrains.id_category = id_category
-        }
+        // if(id_category){
+        //     constrains.id_category = id_category
+        // }
         let employees = await db.Employees.findOne({
             where: {
                 id_employees: req.tokenData.id_employees,
