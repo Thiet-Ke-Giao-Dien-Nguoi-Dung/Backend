@@ -39,6 +39,7 @@ router.put("/restaurants/:id_restaurant/items/:id_item", verifyAdmin, verifyRest
 
 router.get("/restaurants/:id_restaurant/orders", verifyAdmin, verifyRestaurant, OrderController.getOrders);
 router.get("/restaurants/:id_restaurant/orders/:id_order", verifyAdmin, verifyRestaurant, OrderController.getOrder);
+router.get("/restaurants/:id_restaurant/orders/:id_order/print", verifyAdmin, verifyRestaurant, OrderController.createBillForPrint);
 router.put("/restaurants/:id_restaurant/orders/:id_order/status", verifyAdmin, verifyRestaurant, OrderController.changeStatusOfOrder);
 
 

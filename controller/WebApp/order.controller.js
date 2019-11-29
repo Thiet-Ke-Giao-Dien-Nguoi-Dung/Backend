@@ -1,7 +1,7 @@
 const db = require("../../models/index");
 const response = require("../../util/response");
 const moment = require("moment");
-
+const createBill = require("../../util/createBill");
 
 async function getOrders(req, res) {
     try{
@@ -116,8 +116,60 @@ async function getOrder(req, res){
 }
 
 
+async function createBillForPrint(req, res) {
+    try{
+        let {id_restaurant, id_order} = req.params;
+        let order = await db.Order.findOne({
+            where: {
+                id_restaurant: id_restaurant,
+                id_order: id_order
+            },
+            attributes: ['id_order', 'status'],
+            include: [
+                {
+                    model: db.Table,
+                    attributes: ['id_table', 'location']
+                },
+                {
+                    model: db.Item,
+                    as: 'items',
+                    attributes: ['name', 'price']
+                }
+            ]
+        });
+        order = order.dataValues;
+        if(order.status !== "done"){
+            throw new Error("Đơn hàng này chưa xong nên không thể xuất hoá đơn.")
+        }
+        let sum = 0;
+        order.items.forEach(e => {
+            sum = sum + e.dataValues.price * e.dataValues.OrderItem.dataValues.quantity;
+        });
+        order.revenue = sum;
+        order.location = order.Table.location;
+        delete order.Table;
+        order.items = order.items.map(e => {
+            return {
+                name: e.name,
+                price: e.price,
+                quantity: e.OrderItem.quantity
+            }
+        });
+        let html = createBill(order);
+        html = html.trim();
+        html = html.replace(/(\r\n|\n|\r)/gm,"");
+        html = html.replace(/(\\)/gm, '');
+        return res.json(response.buildSuccess({html}));
+    }
+    catch(err){
+        console.log("createBillForPrint: ", err.message);
+        return res.json(response.buildFail(err.message))
+    }
+}
+
 module.exports = {
     getOrders,
     changeStatusOfOrder,
-    getOrder
+    getOrder,
+    createBillForPrint
 };
