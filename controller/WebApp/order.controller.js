@@ -2,6 +2,7 @@ const db = require("../../models/index");
 const response = require("../../util/response");
 const moment = require("moment");
 const createBill = require("../../util/createBill");
+const fs = require("fs");
 
 async function getOrders(req, res) {
     try{
@@ -159,7 +160,9 @@ async function createBillForPrint(req, res) {
         html = html.trim();
         html = html.replace(/(\r\n|\n|\r)/gm,"");
         html = html.replace(/(\\)/gm, '');
-        return res.json(response.buildSuccess({html}));
+        let file_name = Date.now() + ".html";
+        fs.writeFileSync("./bill/" + file_name, html);
+        return res.json(response.buildSuccess({html, file_name: file_name}));
     }
     catch(err){
         console.log("createBillForPrint: ", err.message);

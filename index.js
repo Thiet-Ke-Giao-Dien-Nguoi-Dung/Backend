@@ -7,8 +7,8 @@ const cors = require("cors");
 const SocketIO = require("socket.io");
 
 const db = require("./models/index");
-
 const app = express();
+app.use('/static', express.static('./bill'));
 app.use(cors());
 
 const server = require("http").createServer(app);
